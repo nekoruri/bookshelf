@@ -2,39 +2,53 @@
 
 use strict;
 use warnings;
+use utf8;
 
+# 標準モジュール
+use Encode qw(decode);
+use LWP::UserAgent;
+
+# 追加モジュール
 use Mojolicious::Lite;
-
 use Config::Merge;
 use URI::Amazon::APA;
-use LWP::UserAgent;
 use XML::Simple;
-use YAML::Syck;
 
+# デバッグ出力用
 use Data::Dumper;
+use YAML::Syck;
+$YAML::Syck::ImplicitUnicode = 1;
 
+# 設定ファイル読み込み
 my $config = Config::Merge->new(app->home->rel_file('config'));
-warn Dumper($config);
 
-my $u = URI::Amazon::APA->new($config->('amazon.endpoint'));
-$u->query_form(
-    Service     => 'AWSECommerceService',
-    Operation   => 'ItemSearch',
-    Title       => shift || 'Perl',
-    SearchIndex => 'Books',
-);
+get '/' => sub {
+    my $self = shift;
 
-$u->sign(
-    key    => $config->('amazon.key'),
-    secret => $config->('amazon.secret'),
-);
+    my $u = URI::Amazon::APA->new($config->('amazon.endpoint'));
+    $u->query_form(
+        Service     => 'AWSECommerceService',
+        Operation   => 'ItemSearch',
+        Title       => shift || 'Perl',
+        SearchIndex => 'Books',
+    );
 
-my $ua = LWP::UserAgent->new;
-my $r = $ua->get($u);
-if ( $r->is_success ) {
-    print YAML::Syck::Dump( XMLin( $r->content ) );
-} else {
-    print $r->status_line, $r->as_string;
-}
+    $u->sign(
+        key    => $config->('amazon.key'),
+        secret => $config->('amazon.secret'),
+    );
 
+    my $ua = LWP::UserAgent->new;
+    my $r = $ua->get($u);
+    if ( $r->is_success ) {
+        my $info = XMLin($r->content);
+        $self->stash(output => YAML::Syck::Dump($info));
+    } else {
+        $self->stash(output => $r->status_line.$r->as_string);
+    }
+
+} => 'index';
+
+app->types->type(html => 'text/html; charset=utf-8');
+app->start;
 
