@@ -60,7 +60,7 @@ get '/item/az:asin' => sub {
         Operation     => 'ItemLookup',
         Condition     => 'All',
         ItemId        => $asin,
-        ResponseGroup => 'Medium',
+        ResponseGroup => 'Images,ItemAttributes',
         AssociateTag  => $config->('amazon.AssociateTag'),
     );
 
