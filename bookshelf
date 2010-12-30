@@ -72,11 +72,13 @@ get '/item/az:asin' => sub {
     my $ua = LWP::UserAgent->new;
     my $r = $ua->get($u);
     if ( $r->is_success ) {
-        my $info = XMLin($r->content);
-        $self->stash(output => YAML::Syck::Dump($info->{Items}{Item}));
-        $self->stash(item => $info->{Items}{Item});
+        my $xml_parser = XML::Simple->new(ForceArray => ['Item', 'ImageSet', 'ItemLink']); 
+        my $info = $xml_parser->XMLin($r->content);
+        $self->stash(output => YAML::Syck::Dump($info));
+        $self->stash(item => $info->{Items}{Item}[0]);
     } else {
-        $self->stash(output => $r->status_line.$r->as_string);
+        $self->redirect_to($self->url_for('index')->to_abs);
+#        $self->stash(output => $r->status_line.$r->as_string);
     }
 
 } => 'item';
