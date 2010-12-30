@@ -31,6 +31,7 @@ get '/' => sub {
         Operation   => 'ItemSearch',
         Title       => shift || 'Perl',
         SearchIndex => 'Books',
+        AssociateTag => $config->('amazon.AssociateTag'),
     );
 
     $u->sign(
@@ -60,6 +61,7 @@ get '/item/az:asin' => sub {
         Condition     => 'All',
         ItemId        => $asin,
         ResponseGroup => 'Medium',
+        AssociateTag  => $config->('amazon.AssociateTag'),
     );
 
     $u->sign(
@@ -71,7 +73,7 @@ get '/item/az:asin' => sub {
     my $r = $ua->get($u);
     if ( $r->is_success ) {
         my $info = XMLin($r->content);
-        $self->stash(output => YAML::Syck::Dump($info));
+        $self->stash(output => YAML::Syck::Dump($info->{Items}{Item}));
         $self->stash(item => $info->{Items}{Item});
     } else {
         $self->stash(output => $r->status_line.$r->as_string);
