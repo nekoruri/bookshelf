@@ -1,0 +1,9 @@
+<html>
+<head>
+<title>bookshelf</title>
+</head>
+<body>
+<h1>bookshelf</h1>
+<pre><%= $output %></pre>
+</body>
+</html>
