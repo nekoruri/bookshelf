@@ -49,6 +49,36 @@ get '/' => sub {
 
 } => 'index';
 
+get '/item/az:asin' => sub {
+    my $self = shift;
+    my $asin = $self->param('asin');
+
+    my $u = URI::Amazon::APA->new($config->('amazon.endpoint'));
+    $u->query_form(
+        Service       => 'AWSECommerceService',
+        Operation     => 'ItemLookup',
+        Condition     => 'All',
+        ItemId        => $asin,
+        ResponseGroup => 'Medium',
+    );
+
+    $u->sign(
+        key    => $config->('amazon.key'),
+        secret => $config->('amazon.secret'),
+    );
+
+    my $ua = LWP::UserAgent->new;
+    my $r = $ua->get($u);
+    if ( $r->is_success ) {
+        my $info = XMLin($r->content);
+        $self->stash(output => YAML::Syck::Dump($info));
+        $self->stash(item => $info->{Items}{Item});
+    } else {
+        $self->stash(output => $r->status_line.$r->as_string);
+    }
+
+} => 'item';
+
 app->types->type(html => 'text/html; charset=utf-8');
 app->start;
 

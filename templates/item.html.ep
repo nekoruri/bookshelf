@@ -1,0 +1,13 @@
+<html>
+<head>
+<title>bookshelf</title>
+</head>
+<body>
+<h1>bookshelf</h1>
+% if ($item) {
+<p><img src="<%= $item->{ImageSets}{ImageSet}{LargeImage}{URL} %>" />
+<%= $item->{ASIN} %></p>
+% }
+<pre><%= $output %></pre>
+</body>
+</html>
