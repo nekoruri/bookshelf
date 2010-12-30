@@ -1,13 +1,15 @@
 <html>
 <head>
-<title>bookshelf</title>
+  <title>bookshelf</title>
+  <link rel="stylesheet" href="/bookshelf.css" type="text/css">
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 </head>
 <body>
-<h1>bookshelf</h1>
+  <h1>bookshelf</h1>
 % if ($item) {
-<p><a href="<%= $item->{DetailPageURL} %>"><img src="<%= $item->{ImageSets}{ImageSet}{SmallImage}{URL} %>" /></a>
-<%= $item->{ASIN} %></p>
+  <p><a href="<%= $item->{DetailPageURL} %>"><img src="<%= $item->{ImageSets}{ImageSet}{SmallImage}{URL} %>" /></a>
+  <%= $item->{ASIN} %></p>
 % }
-<pre><%= $output %></pre>
+  <pre><%= $output %></pre>
 </body>
 </html>
