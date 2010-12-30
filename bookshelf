@@ -1,0 +1,40 @@
+#!/usr/bin/env perl 
+
+use strict;
+use warnings;
+
+use Mojolicious::Lite;
+
+use Config::Merge;
+use URI::Amazon::APA;
+use LWP::UserAgent;
+use XML::Simple;
+use YAML::Syck;
+
+use Data::Dumper;
+
+my $config = Config::Merge->new(app->home->rel_file('config'));
+warn Dumper($config);
+
+my $u = URI::Amazon::APA->new($config->('amazon.endpoint'));
+$u->query_form(
+    Service     => 'AWSECommerceService',
+    Operation   => 'ItemSearch',
+    Title       => shift || 'Perl',
+    SearchIndex => 'Books',
+);
+
+$u->sign(
+    key    => $config->('amazon.key'),
+    secret => $config->('amazon.secret'),
+);
+
+my $ua = LWP::UserAgent->new;
+my $r = $ua->get($u);
+if ( $r->is_success ) {
+    print YAML::Syck::Dump( XMLin( $r->content ) );
+} else {
+    print $r->status_line, $r->as_string;
+}
+
+
