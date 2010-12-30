@@ -16,3 +16,31 @@ a img {
     border: 0;
 }
 
+div.iteminfo { 
+    margin: 0 20px;
+    border: 1px solid #000;
+    height: 300px;
+}
+
+div.image {
+    float: left;
+    padding-top: 20px;
+    width: 200px;
+    text-align: center;
+    margin: auto;
+}
+
+div.metadata {
+    margin-top: 20px;
+    margin-left: 200px;
+    margin-right: 20px;
+    background: #fff;
+    border: 1px solid #000;
+}
+
+/* デバッグ用 */
+pre {
+    margin-top: 1em;
+    padding: 1em;
+    border: 1px solid #000;
+}

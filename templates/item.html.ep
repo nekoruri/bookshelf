@@ -12,7 +12,9 @@
   <!-- 書籍情報 -->
   <div class="iteminfo">
   <div class="image">
-  <a href="<%= $item->{DetailPageURL} %>"><img src="<%= $item->{SmallImage}{URL} %>" /></a>
+% my $image_url = $item->{LargeImage}{URL};
+% $image_url =~ s/(?:\._SL\d+_)?\.jpg$/.SL250.jpg/;
+  <a href="<%= $item->{DetailPageURL} %>"><img src="<%= $image_url %>" /></a>
   </div>
   <div class="metadata">
   <table>
@@ -43,6 +45,8 @@
     <tr><th>サイズ</th><td><%= int($w) %> x <%= int($l) %> x <%= int($h) %> mm </td></tr>
     <tr><th>重量</th><td><%= int($weight) %> g</td></tr>
     </table>
+  </div>
+  </div>
   <pre><%= $output %></pre>
 </body>
 </html>
