@@ -72,7 +72,7 @@ get '/item/az:asin' => sub {
     my $ua = LWP::UserAgent->new;
     my $r = $ua->get($u);
     if ( $r->is_success ) {
-        my $xml_parser = XML::Simple->new(ForceArray => ['Item', 'ImageSet', 'ItemLink']); 
+        my $xml_parser = XML::Simple->new(ForceArray => ['Item', 'ImageSet', 'ItemLink', 'Author', 'Director', 'Creator']); 
         my $info = $xml_parser->XMLin($r->content);
         $self->stash(output => YAML::Syck::Dump($info));
         $self->stash(item => $info->{Items}{Item}[0]);

@@ -22,15 +22,20 @@
     <tr><th>著者</th><td> 
 % if ($attr->{Author} && ref($attr->{Author}) eq 'ARRAY') {
 %   foreach my $author ( @{$attr->{Author}} ) {
-    <%= $author %>
+    <%= $author %>(著者)
+%   }
+% }
+% if ($attr->{Director} && ref($attr->{Director}) eq 'ARRAY') {
+%   foreach my $director ( @{$attr->{Director}} ) {
+    <%= $director %>(監督)
 %   }
 % }
 % if ($attr->{Creator} && ref($attr->{Creator}) eq 'ARRAY') {
 %   foreach my $creator ( @{$attr->{Creator}} ) {
     <%= $creator->{content} %>(<%= $creator->{Role} %>)
 %   }
-    </td></tr>
 % }
+    </td></tr>
     <tr><th>ISBN</th><td><%= $attr->{EAN} %><br /><%= $attr->{ISBN} %></td></tr>
     <tr><th>形状</th><td><%= $attr->{Binding} %></td></tr>
     <tr><th>出版社</th><td><%= $attr->{Manufacturer} %></td></tr>
