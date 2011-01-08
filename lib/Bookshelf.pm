@@ -28,7 +28,7 @@ sub startup {
     # Routes
     my $r = $self->routes;
     $r->namespace('Bookshelf::Controller');
-    $r->any('/item/az:asin')->to('item#amazon')->name('item');
+    $r->get('/item/az:asin')->to('item#amazon')->name('item');
 }
 
 1;
