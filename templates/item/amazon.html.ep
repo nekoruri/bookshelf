@@ -1,0 +1,57 @@
+<html>
+<head>
+  <title>bookshelf</title>
+  <link rel="stylesheet" href="/bookshelf.css" type="text/css">
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h1 id="sitename">bookshelf</h1>
+  </div>
+
+  <!-- 書籍情報 -->
+  <div class="iteminfo">
+  <div class="image">
+% my $image_url = $item->{LargeImage}{URL};
+% $image_url =~ s/(?:\._SL\d+_)?\.jpg$/.SL250.jpg/;
+  <a href="<%= $item->{DetailPageURL} %>"><img src="<%= $image_url %>" /></a>
+  </div>
+  <div class="metadata">
+  <table>
+% my $attr = $item->{ItemAttributes};
+    <tr><th>著者</th><td> 
+% if ($attr->{Author} && ref($attr->{Author}) eq 'ARRAY') {
+%   foreach my $author ( @{$attr->{Author}} ) {
+    <%= $author %>(著者)
+%   }
+% }
+% if ($attr->{Director} && ref($attr->{Director}) eq 'ARRAY') {
+%   foreach my $director ( @{$attr->{Director}} ) {
+    <%= $director %>(監督)
+%   }
+% }
+% if ($attr->{Creator} && ref($attr->{Creator}) eq 'ARRAY') {
+%   foreach my $creator ( @{$attr->{Creator}} ) {
+    <%= $creator->{content} %>(<%= $creator->{Role} %>)
+%   }
+% }
+    </td></tr>
+    <tr><th>ISBN</th><td><%= $attr->{EAN} %><br /><%= $attr->{ISBN} %></td></tr>
+    <tr><th>形状</th><td><%= $attr->{Binding} %></td></tr>
+    <tr><th>出版社</th><td><%= $attr->{Manufacturer} %></td></tr>
+    <tr><th>発行日</th><td><%= $attr->{PublicationDate} %></td></tr>
+    <tr><th>ページ数</th><td><%= $attr->{NumberOfPages} %></td></tr>
+% my $dim = $attr->{PackageDimensions};
+% my ( $h, $l, $w, $weight );
+% $dim->{Height}{Units} eq 'hundredths-inches' ? $h = $dim->{Height}{content} * 0.254 : $dim->{Height}{content};
+% $dim->{Length}{Units} eq 'hundredths-inches' ? $l = $dim->{Length}{content} * 0.254 : $dim->{Length}{content};
+% $dim->{Width}{Units} eq 'hundredths-inches'  ? $w = $dim->{Width}{content} * 0.254 : $dim->{Width}{content};
+% $dim->{Weight}{Units} eq 'hundredths-pounds' ? $weight = $dim->{Weight}{content} * 4.5359237 : $dim->{Weight}{content};
+    <tr><th>サイズ</th><td><%= int($w) %> x <%= int($l) %> x <%= int($h) %> mm </td></tr>
+    <tr><th>重量</th><td><%= int($weight) %> g</td></tr>
+    </table>
+  </div>
+  </div>
+  <pre><%= $output %></pre>
+</body>
+</html>

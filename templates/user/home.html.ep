@@ -1,0 +1,7 @@
+test
+
+<ul>
+% while(my $item = $user_items->next) {
+<li><a href="/item/<%= $item->item_from eq 'amazon' ? 'az'.$item->item_code : 'unknown item_from' %>"><%= $item->item_from eq 'amazon' ? 'az'.$item->item_code : 'unknown item_from' %></a></li>
+% }
+</ul>
