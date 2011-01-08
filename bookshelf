@@ -2,95 +2,9 @@
 
 use strict;
 use warnings;
-use utf8;
 
-# 標準モジュール
-use Encode qw(decode);
-use LWP::UserAgent;
+use lib 'lib';
+use Bookshelf;
 
-# 追加モジュール
-use Mojolicious::Lite;
-use Config::Merge;
-use URI::Amazon::APA;
-use XML::Simple;
-
-# デバッグ出力用
-use Data::Dumper;
-use YAML::Syck;
-$YAML::Syck::ImplicitUnicode = 1;
-
-# 設定ファイル読み込み
-my $config = Config::Merge->new( app->home->rel_file('config') );
-
-get '/' => sub {
-    my $self = shift;
-
-    my $u = URI::Amazon::APA->new( $config->('amazon.endpoint') );
-    $u->query_form(
-        Service      => 'AWSECommerceService',
-        Operation    => 'ItemSearch',
-        Title        => shift || 'Perl',
-        SearchIndex  => 'Books',
-        AssociateTag => $config->('amazon.AssociateTag'),
-    );
-
-    $u->sign(
-        key    => $config->('amazon.key'),
-        secret => $config->('amazon.secret'),
-    );
-
-    my $ua = LWP::UserAgent->new;
-    my $r  = $ua->get($u);
-    if ( $r->is_success ) {
-        my $info = XMLin( $r->content );
-        $self->stash( output => YAML::Syck::Dump($info) );
-    }
-    else {
-        $self->stash( output => $r->status_line . $r->as_string );
-    }
-
-} => 'index';
-
-get '/item/az:asin' => sub {
-    my $self = shift;
-    my $asin = $self->param('asin');
-
-    my $u = URI::Amazon::APA->new( $config->('amazon.endpoint') );
-    $u->query_form(
-        Service       => 'AWSECommerceService',
-        Operation     => 'ItemLookup',
-        Condition     => 'All',
-        ItemId        => $asin,
-        ResponseGroup => 'Images,ItemAttributes',
-        AssociateTag  => $config->('amazon.AssociateTag'),
-    );
-
-    $u->sign(
-        key    => $config->('amazon.key'),
-        secret => $config->('amazon.secret'),
-    );
-
-    my $ua = LWP::UserAgent->new;
-    my $r  = $ua->get($u);
-    if ( $r->is_success ) {
-        my $xml_parser = XML::Simple->new(
-            ForceArray => [
-                'Item',     'ImageSet', 'ItemLink', 'Author',
-                'Director', 'Creator'
-            ]
-        );
-        my $info = $xml_parser->XMLin( $r->content );
-        $self->stash( output => YAML::Syck::Dump($info) );
-        $self->stash( item   => $info->{Items}{Item}[0] );
-    }
-    else {
-        $self->redirect_to( $self->url_for('index')->to_abs );
-
-        #        $self->stash(output => $r->status_line.$r->as_string);
-    }
-
-} => 'item';
-
-app->types->type( html => 'text/html; charset=utf-8' );
-app->start;
+Bookshelf->start;
 
