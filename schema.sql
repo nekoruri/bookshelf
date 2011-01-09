@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS user_items (
     item_id INT UNSIGNED NOT NULL,
     status ENUM ('unread','reading','done') NOT NULL DEFAULT 'unread',
     status_history_yaml TEXT COMMENT 'YAML形式のステータス変更履歴',
+    status_history_version UNSIGNED INT NOT NULL DEFAULT 1,
     UNIQUE INDEX ( user_id, item_id )
 ) ENGINE=InnoDB;
 
