@@ -25,24 +25,32 @@ sub home {
     $self->stash(user => $user);
     $self->app->log->info("user_id: ".$user->id);
 
-    my $rs = $self->db->resultset;
-    $rs->add_select('items.item_from' => 'item_from');
-    $rs->add_select('items.item_code' => 'item_code');
-    $rs->from([]);
-    $rs->add_join(
-        user_items => [
-            {
-                type => 'inner',
-                table => 'items',
-                condition => 'user_items.item_id = items.id',
-            },
-        ],
-    );
-    $rs->add_where('user_items.user_id' => $user->id);
-    $self->app->log->info("sql: ".$rs->as_sql);
+    foreach my $status ( qw(unread reading done) ) {
+        my $rs = $self->db->resultset;
+        $rs->add_select('items.item_from' => 'item_from');
+        $rs->add_select('items.item_code' => 'item_code');
+        $rs->add_select('items.title' => 'title');
+        $rs->add_select('items.creator' => 'creator');
+        $rs->add_select('items.image' => 'image');
+        $rs->add_select('items.pubdate' => 'pubdate');
+        $rs->add_select('items.product_type' => 'product_type');
+        $rs->from([]);
+        $rs->add_join(
+            user_items => [
+                {
+                    type => 'inner',
+                    table => 'items',
+                    condition => 'user_items.item_id = items.id',
+                },
+            ],
+        );
+        $rs->add_where('user_items.user_id' => $user->id);
+        $rs->add_where('user_items.status' => $status);
+        $self->app->log->info("sql: ".$rs->as_sql);
 
-    my $user_items = $rs->retrieve;
-    $self->stash(user_items => $user_items);
+        my $user_items = $rs->retrieve;
+        $self->stash("user_".$status."_items" => $user_items);
+    }
 }
 
 1;

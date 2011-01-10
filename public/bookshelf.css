@@ -7,7 +7,7 @@ body {
     background: #ffffff;
 }
 
-h1, h2, p, table, pre { 
+h1, h2, h3, p, table, pre { 
     margin-left: 20px;
     margin-right: 20px;
 }
@@ -44,3 +44,23 @@ pre {
     padding: 1em;
     border: 1px solid #000;
 }
+
+/* 書籍一覧 */
+ul {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+ul li {
+    display: block;
+    float: left;
+    width: 120px;
+    border: 1px #000 solid;
+    text-align: center;
+    font-size: small;
+}
+
+h3 {
+    clear: both;
+}
+

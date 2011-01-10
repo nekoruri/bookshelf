@@ -13,7 +13,7 @@ install_table amazon_item_cache => schema {
 
 install_table items => schema {
     pk 'id';
-    columns qw(id item_from idem_code registered_at);
+    columns qw(id item_from idem_code title creator image pubdate product_type created_at);
 };
 
 install_table users => schema {
