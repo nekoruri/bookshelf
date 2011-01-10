@@ -1,5 +1,6 @@
-test
+<h1><%= $user->username %>さんのプロフィール</h1>
 
+<h2>書籍一覧</h2>
 <ul>
 % while(my $item = $user_items->next) {
 <li><a href="/item/<%= $item->item_from eq 'amazon' ? 'az'.$item->item_code : 'unknown item_from' %>"><%= $item->item_from eq 'amazon' ? 'az'.$item->item_code : 'unknown item_from' %></a></li>

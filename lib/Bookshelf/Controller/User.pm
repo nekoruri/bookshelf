@@ -22,9 +22,8 @@ sub home {
         return;
     }
 
-    my $user_id = $user->id;
-
-    $self->app->log->info("user_id: $user_id");
+    $self->stash(user => $user);
+    $self->app->log->info("user_id: ".$user->id);
 
     my $rs = $self->db->resultset;
     $rs->add_select('items.item_from' => 'item_from');
@@ -39,7 +38,7 @@ sub home {
             },
         ],
     );
-    $rs->add_where('user_items.user_id' => $user_id);
+    $rs->add_where('user_items.user_id' => $user->id);
     $self->app->log->info("sql: ".$rs->as_sql);
 
     my $user_items = $rs->retrieve;
